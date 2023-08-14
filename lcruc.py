@@ -1,5 +1,15 @@
 import tkinter as tk
 
+
+def update_cable_length_options(*args):
+    selected_meter = meter_var.get()
+
+    if selected_meter == "HP/Agilent 4285A (75 kHz to 30 MHz. 0.1% basic accuracy)":
+        cable_length_radio_buttons[3].config(state="disabled")  # Disable "4 m" option
+    else:
+        cable_length_radio_buttons[3].config(state="normal")  # Enable "4 m" option
+
+
 # Configure the font size for all items
 font_size = 12  # Adjust the font size as needed
 font = ("Arial", font_size)
@@ -39,9 +49,13 @@ cable_length_label = tk.Label(bottom_frame, text="Cable length", bg="white", fon
 cable_length_label.grid(row=len(meter) + 1, column=0, sticky=tk.W)
 cable_length_var = tk.StringVar(value="0 m (fixture directly on meter terminals)")  # Default value
 cable_length = ["0 m (fixture directly on meter terminals)","1 m", "2 m", "4 m (only on 4284A with option 006)"]
+
+
+cable_length_radio_buttons = []
 for i, choice in enumerate(cable_length):
-    radio_button = tk.Radiobutton(bottom_frame, text=choice, variable=cable_length_var, value=choice, bg="white", font=standard_text)
+    radio_button = tk.Radiobutton(bottom_frame, text=choice, variable=cable_length_var, value=choice, bg="white", font=("Arial", 12))
     radio_button.grid(row=len(meter) + 1 + i, column=1, sticky=tk.W)
+    cable_length_radio_buttons.append(radio_button)
 
 # Create the second gap
 gap_label2 = tk.Label(bottom_frame, text="", bg="white")
@@ -68,6 +82,9 @@ oscillator_levels = ["≤ 1 Vrms", "> 1 Vrms"]
 for i, choice in enumerate(oscillator_levels):
     radio_button = tk.Radiobutton(bottom_frame, text=choice, variable=oscillator_var, value=choice, bg="white", font=standard_text)
     radio_button.grid(row=len(meter) + len(cable_length) + len(temperature) + 3 + i, column=1, sticky=tk.W)
+
+# Add a trace to the meter_var StringVar to update cable length options visibility
+meter_var.trace("w", update_cable_length_options)
 
 window.mainloop()
 
